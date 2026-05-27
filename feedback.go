@@ -4,13 +4,6 @@
 package aw
 
 import (
-	"encoding/json"
-	"fmt"
-	"log"
-	"os"
-	"sort"
-	"strings"
-
 	"go.deanishe.net/fuzzy"
 )
 
@@ -61,124 +54,73 @@ type Item struct {
 }
 
 // Title sets the title of the item in Alfred's results.
-func (it *Item) Title(s string) *Item {
-	it.title = s
-	return it
-}
+func (it *Item) Title(s string) *Item { _ = "STUB: not implemented"; return nil }
 
 // Subtitle sets the subtitle of the item in Alfred's results.
-func (it *Item) Subtitle(s string) *Item {
-	it.subtitle = &s
-	return it
-}
+func (it *Item) Subtitle(s string) *Item { _ = "STUB: not implemented"; return nil }
 
 // Match sets Item's match field for filtering.
 // If present, this field is preferred over the item's title for fuzzy sorting
 // via Feedback, and by Alfred's "Alfred filters results" feature.
-func (it *Item) Match(s string) *Item {
-	it.match = &s
-	return it
-}
+func (it *Item) Match(s string) *Item { _ = "STUB: not implemented"; return nil }
 
 // Arg sets Item's arg, the value(s) passed as {query} to the next workflow action.
 // Multiple values are allowed in Alfred 4.1 and later.
-func (it *Item) Arg(s ...string) *Item {
-	it.arg = s
-	return it
-}
+func (it *Item) Arg(s ...string) *Item { _ = "STUB: not implemented"; return nil }
 
 // UID sets Item's unique ID, which is used by Alfred to remember your choices.
 // Use a blank string to force results to appear in the order you add them.
 //
 // You can also use the SuppressUIDs() Option to (temporarily) suppress output of UIDs.
-func (it *Item) UID(s string) *Item {
-	if it.noUID {
-		return it
-	}
-	it.uid = &s
-	return it
-}
+func (it *Item) UID(s string) *Item { _ = "STUB: not implemented"; return nil }
 
 // Autocomplete sets what Alfred's query expands to when the user TABs result.
 // (or hits RETURN on a result where valid is false)
-func (it *Item) Autocomplete(s string) *Item {
-	it.autocomplete = &s
-	return it
-}
+func (it *Item) Autocomplete(s string) *Item { _ = "STUB: not implemented"; return nil }
 
 // Valid tells Alfred whether the result is "actionable", i.e. ENTER will
 // pass Arg to subsequent action.
-func (it *Item) Valid(b bool) *Item {
-	it.valid = b
-	return it
-}
+func (it *Item) Valid(b bool) *Item { _ = "STUB: not implemented"; return nil }
 
 // IsFile tells Alfred that this Item is a file, i.e. Arg is a path
 // and Alfred's File Actions should be made available.
-func (it *Item) IsFile(b bool) *Item {
-	it.file = b
-	return it
-}
+func (it *Item) IsFile(b bool) *Item { _ = "STUB: not implemented"; return nil }
 
 // Copytext is what CMD+C should copy instead of Arg (the default).
-func (it *Item) Copytext(s string) *Item {
-	it.copytext = &s
-	return it
-}
+func (it *Item) Copytext(s string) *Item { _ = "STUB: not implemented"; return nil }
 
 // Largetype is what is shown in Alfred's Large Text window on CMD+L
 // instead of Arg (the default).
-func (it *Item) Largetype(s string) *Item {
-	it.largetype = &s
-	return it
-}
+func (it *Item) Largetype(s string) *Item { _ = "STUB: not implemented"; return nil }
 
 // Quicklook is a path or URL shown in a macOS Quicklook window on SHIFT
 // or CMD+Y.
-func (it *Item) Quicklook(s string) *Item {
-	it.ql = &s
-	return it
-}
+func (it *Item) Quicklook(s string) *Item { _ = "STUB: not implemented"; return nil }
 
 // Icon sets the icon for the Item.
 // Can point to an image file, a filepath of a file whose icon should be used,
 // or a UTI.
 //
 // See the documentation for Icon for more details.
-func (it *Item) Icon(icon *Icon) *Item {
-	it.icon = icon
-	return it
-}
+func (it *Item) Icon(icon *Icon) *Item { _ = "STUB: not implemented"; return nil }
 
 // Action sets the value(s) to be passed to Alfred's Universal Actions if
 // the user actions this item. Alfred will auto-detect the type of the value(s).
 //
 // Added in Alfred 4.5.
-func (it *Item) Action(value ...string) *Item { return it.ActionForType("", value...) }
+func (it *Item) Action(value ...string) *Item { _ = "STUB: not implemented"; return nil }
 
 // ActionForType sets the value(s) to be passed to Alfred's Universal Actions if
 // the user actions this item. Type may be one of "file", "url" or "text".
 //
 // Added in Alfred 4.5.
 func (it *Item) ActionForType(typ string, value ...string) *Item {
-	if typ == "" {
-		typ = "auto"
-	}
-	if it.actions == nil {
-		it.actions = map[string][]string{}
-	}
-	it.actions[typ] = value
-	return it
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // Var sets an Alfred variable for subsequent workflow elements.
-func (it *Item) Var(k, v string) *Item {
-	if it.vars == nil {
-		it.vars = make(map[string]string, 1)
-	}
-	it.vars[k] = v
-	return it
-}
+func (it *Item) Var(k, v string) *Item { _ = "STUB: not implemented"; return nil }
 
 // NewModifier returns an initialised Modifier bound to this Item.
 // It also populates the Modifier with any workflow variables set in the Item.
@@ -189,114 +131,49 @@ func (it *Item) Var(k, v string) *Item {
 // modifiers (i.e. they evaluate to ""), although a Modifier is returned,
 // it is not retained by Item and will not be sent to Alfred. An error message
 // is also logged.
-func (it *Item) NewModifier(key ...string) *Modifier {
-	m := newModifier(key...)
-	// Add Item variables to Modifier
-	if it.vars != nil {
-		for k, v := range it.vars {
-			m.Var(k, v)
-		}
-	}
+func (it *Item) NewModifier(key ...string) *Modifier { _ = "STUB: not implemented"; return nil }
 
-	it.SetModifier(m)
-	return m
-}
+// Add Item variables to Modifier
 
 // SetModifier sets a Modifier for a modifier key.
-func (it *Item) SetModifier(m *Modifier) {
-	if m.Key == "" {
-		log.Printf("[ERROR] modifier has no key: %#v", m)
-		return
-	}
-	if it.mods == nil {
-		it.mods = map[string]*Modifier{}
-	}
-	it.mods[m.Key] = m
-}
+func (it *Item) SetModifier(m *Modifier) { _ = "STUB: not implemented"; return }
 
 // Cmd returns an initialised Modifier bound to this Item and the CMD (⌘) key.
-func (it *Item) Cmd() *Modifier { return it.NewModifier(ModCmd) }
+func (it *Item) Cmd() *Modifier { _ = "STUB: not implemented"; return nil }
 
 // Alt returns an initialised Modifier bound to this Item and the ALT/OPT (⌥) key.
-func (it *Item) Alt() *Modifier { return it.NewModifier(ModAlt) }
+func (it *Item) Alt() *Modifier { _ = "STUB: not implemented"; return nil }
 
 // Opt is a synonym for Alt().
-func (it *Item) Opt() *Modifier { return it.Alt() }
+func (it *Item) Opt() *Modifier {
+	_ = "STUB: not implemented"
 
-// Ctrl returns an initialised Modifier bound to this Item and the CTRL (^) key.
-func (it *Item) Ctrl() *Modifier { return it.NewModifier(ModCtrl) }
+	// Ctrl returns an initialised Modifier bound to this Item and the CTRL (^) key.
+	return nil
+}
+
+func (it *Item) Ctrl() *Modifier { _ = "STUB: not implemented"; return nil }
 
 // Shift returns an initialised Modifier bound to this Item and the SHIFT (⇧) key.
-func (it *Item) Shift() *Modifier { return it.NewModifier(ModShift) }
+func (it *Item) Shift() *Modifier { _ = "STUB: not implemented"; return nil }
 
 // Fn returns an initialised Modifier bound to this Item and the fn key.
-func (it *Item) Fn() *Modifier { return it.NewModifier(ModFn) }
+func (it *Item) Fn() *Modifier { _ = "STUB: not implemented"; return nil }
 
 // Vars returns the Item's workflow variables.
 func (it *Item) Vars() map[string]string {
-	return it.vars
+	_ = "STUB: not implemented"
+
+	// MarshalJSON serializes Item to Alfred's JSON format.
+	// You shouldn't need to call this directly: use SendFeedback() instead.
+	return nil
 }
 
-// MarshalJSON serializes Item to Alfred's JSON format.
-// You shouldn't need to call this directly: use SendFeedback() instead.
-func (it *Item) MarshalJSON() ([]byte, error) {
-	var (
-		typ  string
-		ql   string
-		text *itemText
-	)
+func (it *Item) MarshalJSON() ([]byte, error) { _ = "STUB: not implemented"; return nil, nil }
 
-	if it.file {
-		typ = "file"
-	}
+// Serialise Item
 
-	if it.ql != nil {
-		ql = *it.ql
-	}
-
-	if it.copytext != nil || it.largetype != nil {
-		text = &itemText{Copy: it.copytext, Large: it.largetype}
-	}
-
-	// Serialise Item
-	v := struct {
-		Title     string               `json:"title"`
-		Subtitle  *string              `json:"subtitle,omitempty"`
-		Match     *string              `json:"match,omitempty"`
-		Auto      *string              `json:"autocomplete,omitempty"`
-		Arg       interface{}          `json:"arg,omitempty"`
-		UID       *string              `json:"uid,omitempty"`
-		Valid     bool                 `json:"valid"`
-		Type      string               `json:"type,omitempty"`
-		Text      *itemText            `json:"text,omitempty"`
-		Icon      *Icon                `json:"icon,omitempty"`
-		Quicklook string               `json:"quicklookurl,omitempty"`
-		Variables map[string]string    `json:"variables,omitempty"`
-		Mods      map[string]*Modifier `json:"mods,omitempty"`
-		Actions   map[string][]string  `json:"action,omitempty"`
-	}{
-		Title:     it.title,
-		Subtitle:  it.subtitle,
-		Match:     it.match,
-		Auto:      it.autocomplete,
-		UID:       it.uid,
-		Valid:     it.valid,
-		Type:      typ,
-		Text:      text,
-		Icon:      it.icon,
-		Quicklook: ql,
-		Variables: it.vars,
-		Mods:      it.mods,
-		Actions:   it.actions,
-	}
-	// serialise single arg as string
-	if len(it.arg) == 1 {
-		v.Arg = it.arg[0]
-	} else if len(it.arg) > 1 {
-		v.Arg = it.arg
-	}
-	return json.Marshal(v)
-}
+// serialise single arg as string
 
 // itemText encapsulates the copytext and largetext values for a result Item.
 type itemText struct {
@@ -325,87 +202,35 @@ type Modifier struct {
 }
 
 // newModifier creates a Modifier, validating key.
-func newModifier(key ...string) *Modifier {
-	l := []string{}
-	for _, k := range key {
-		s := strings.TrimSpace(strings.ToLower(k))
-		if s == "opt" {
-			s = "alt"
-		}
-		if s == "" {
-			continue
-		}
-		if s != "alt" && s != "cmd" && s != "ctrl" && s != "fn" && s != "shift" {
-			log.Printf("[warning] ignored invalid modifier %q", k)
-			continue
-		}
-		l = append(l, s)
-	}
-	sort.Strings(l)
-	s := strings.Join(l, "+")
-	return &Modifier{Key: s, vars: map[string]string{}}
-}
+func newModifier(key ...string) *Modifier { _ = "STUB: not implemented"; return nil }
 
 // Arg sets the arg for the Modifier. Multiple values are allowed in Alfred 4.1 and later.
-func (m *Modifier) Arg(s ...string) *Modifier {
-	m.arg = s
-	return m
-}
+func (m *Modifier) Arg(s ...string) *Modifier { _ = "STUB: not implemented"; return nil }
 
 // Subtitle sets the subtitle for the Modifier.
-func (m *Modifier) Subtitle(s string) *Modifier {
-	m.subtitle = &s
-	return m
-}
+func (m *Modifier) Subtitle(s string) *Modifier { _ = "STUB: not implemented"; return nil }
 
 // Valid sets the valid status for the Modifier.
-func (m *Modifier) Valid(v bool) *Modifier {
-	m.valid = v
-	return m
-}
+func (m *Modifier) Valid(v bool) *Modifier { _ = "STUB: not implemented"; return nil }
 
 // Icon sets an icon for the Modifier.
-func (m *Modifier) Icon(i *Icon) *Modifier {
-	m.icon = i
-	return m
-}
+func (m *Modifier) Icon(i *Icon) *Modifier { _ = "STUB: not implemented"; return nil }
 
 // Var sets a variable for the Modifier.
-func (m *Modifier) Var(k, v string) *Modifier {
-	m.vars[k] = v
-	return m
-}
+func (m *Modifier) Var(k, v string) *Modifier { _ = "STUB: not implemented"; return nil }
 
 // Vars returns all Modifier variables.
 func (m *Modifier) Vars() map[string]string {
-	return m.vars
+	_ = "STUB: not implemented"
+
+	// MarshalJSON serializes Item to Alfred 3's JSON format.
+	// You shouldn't need to call this directly: use SendFeedback() instead.
+	return nil
 }
 
-// MarshalJSON serializes Item to Alfred 3's JSON format.
-// You shouldn't need to call this directly: use SendFeedback() instead.
-func (m *Modifier) MarshalJSON() ([]byte, error) {
-	v := struct {
-		Arg       interface{}       `json:"arg,omitempty"`
-		Subtitle  *string           `json:"subtitle,omitempty"`
-		Valid     bool              `json:"valid,omitempty"`
-		Icon      *Icon             `json:"icon,omitempty"`
-		Variables map[string]string `json:"variables,omitempty"`
-	}{
-		Subtitle:  m.subtitle,
-		Valid:     m.valid,
-		Icon:      m.icon,
-		Variables: m.vars,
-	}
+func (m *Modifier) MarshalJSON() ([]byte, error) { _ = "STUB: not implemented"; return nil, nil }
 
-	// serialise single arg as string
-	if len(m.arg) == 1 {
-		v.Arg = m.arg[0]
-	} else if len(m.arg) > 1 {
-		v.Arg = m.arg
-	}
-
-	return json.Marshal(v)
-}
+// serialise single arg as string
 
 // Feedback represents the results for an Alfred Script Filter.
 //
@@ -422,144 +247,86 @@ type Feedback struct {
 }
 
 // NewFeedback creates a new, initialised Feedback struct.
-func NewFeedback() *Feedback {
-	return &Feedback{Items: []*Item{}, vars: map[string]string{}}
-}
+func NewFeedback() *Feedback { _ = "STUB: not implemented"; return nil }
 
 // Var sets an Alfred variable for subsequent workflow elements.
-func (fb *Feedback) Var(k, v string) *Feedback {
-	if fb.vars == nil {
-		fb.vars = make(map[string]string, 1)
-	}
-	fb.vars[k] = v
-	return fb
-}
+func (fb *Feedback) Var(k, v string) *Feedback { _ = "STUB: not implemented"; return nil }
 
 // Rerun tells Alfred to re-run the Script Filter after `secs` seconds.
-func (fb *Feedback) Rerun(secs float64) *Feedback {
-	fb.rerun = secs
-	return fb
-}
+func (fb *Feedback) Rerun(secs float64) *Feedback { _ = "STUB: not implemented"; return nil }
 
 // Vars returns the Feedback's workflow variables.
 func (fb *Feedback) Vars() map[string]string {
-	return fb.vars
+	_ = "STUB: not implemented"
+
+	// Clear removes any items.
+	return nil
 }
 
-// Clear removes any items.
-func (fb *Feedback) Clear() {
-	if len(fb.Items) > 0 {
-		fb.Items = []*Item{}
-	}
-}
+func (fb *Feedback) Clear() { _ = "STUB: not implemented"; return }
 
 // IsEmpty returns true if Feedback contains no items.
-func (fb *Feedback) IsEmpty() bool { return len(fb.Items) == 0 }
+func (fb *Feedback) IsEmpty() bool { _ = "STUB: not implemented"; return false }
 
 // NewItem adds a new Item and returns a pointer to it.
 //
 // The Item inherits any workflow variables set on the Feedback parent at
 // time of creation.
-func (fb *Feedback) NewItem(title string) *Item {
-	it := &Item{title: title, vars: map[string]string{}, noUID: fb.NoUIDs}
+func (fb *Feedback) NewItem(title string) *Item { _ = "STUB: not implemented"; return nil }
 
-	// Add top-level variables to Item. The reason for this is that
-	// (older versions of) Alfred drops all item- and top-level variables
-	// on the floor if a modifier has any variables set (i.e. only the
-	// modifier's variables are retained). So, add top-level variables to Item
-	// (and in turn to any Modifiers) to enforce more sensible behaviour.
-	for k, v := range fb.vars {
-		it.vars[k] = v
-	}
-
-	fb.Items = append(fb.Items, it)
-	return it
-}
+// Add top-level variables to Item. The reason for this is that
+// (older versions of) Alfred drops all item- and top-level variables
+// on the floor if a modifier has any variables set (i.e. only the
+// modifier's variables are retained). So, add top-level variables to Item
+// (and in turn to any Modifiers) to enforce more sensible behaviour.
 
 // MarshalJSON serializes Feedback to Alfred's JSON format.
 // You shouldn't need to call this: use Send() instead.
-func (fb *Feedback) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		Variables map[string]string `json:"variables,omitempty"`
-		Rerun     float64           `json:"rerun,omitempty"`
-		Items     []*Item           `json:"items"`
-	}{
-		Items:     fb.Items,
-		Rerun:     fb.rerun,
-		Variables: fb.vars,
-	})
-}
+func (fb *Feedback) MarshalJSON() ([]byte, error) { _ = "STUB: not implemented"; return nil, nil }
 
 // Send generates JSON from this struct and sends it to Alfred
 // (by writing the JSON to STDOUT).
 //
 // You shouldn't need to call this directly: use SendFeedback() instead.
-func (fb *Feedback) Send() error {
-	if fb.sent {
-		log.Printf("Feedback already sent. Ignoring.")
-		return nil
-	}
-	output, err := json.MarshalIndent(fb, "", "  ")
-	if err != nil {
-		return fmt.Errorf("Error generating JSON : %w", err)
-	}
-
-	os.Stdout.Write(output)
-	fb.sent = true
-	log.Printf("Sent %d result(s) to Alfred", len(fb.Items))
-	return nil
-}
+func (fb *Feedback) Send() error { _ = "STUB: not implemented"; return nil }
 
 // Sort sorts Items against query. Uses a fuzzy.Sorter with the specified
 // options.
 func (fb *Feedback) Sort(query string, opts ...fuzzy.Option) []*fuzzy.Result {
-	s := fuzzy.New(fb, opts...)
-	return s.Sort(query)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // Filter fuzzy-sorts Items against query and deletes Items that don't match.
 // It returns a slice of Result structs, which contain the results of the
 // fuzzy sorting.
 func (fb *Feedback) Filter(query string, opts ...fuzzy.Option) []*fuzzy.Result {
-	var (
-		items []*Item
-		res   []*fuzzy.Result
-	)
-
-	r := fb.Sort(query, opts...)
-	for i, it := range fb.Items {
-		if r[i].Match {
-			items = append(items, it)
-			res = append(res, r[i])
-		}
-	}
-	fb.Items = items
-	return res
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // Keywords implements fuzzy.Sortable.
 //
 // Returns the match or title field for Item i.
 func (fb *Feedback) Keywords(i int) string {
-	it := fb.Items[i]
+	_ = "STUB: not implemented"
+
 	// Sort on title if match isn't set
-	if it.match != nil {
-		return *it.match
-	}
-	return it.title
+	return ""
 }
 
 // Len implements sort.Interface.
-func (fb *Feedback) Len() int { return len(fb.Items) }
+func (fb *Feedback) Len() int { _ = "STUB: not implemented"; return 0 }
 
 // Less implements sort.Interface.
 func (fb *Feedback) Less(i, j int) bool {
+	_ = "STUB: not implemented"
 	// we only want to sort based on fuzzy match score
 	return false
 }
 
 // Swap implements sort.Interface.
-func (fb *Feedback) Swap(i, j int) { fb.Items[i], fb.Items[j] = fb.Items[j], fb.Items[i] }
+func (fb *Feedback) Swap(i, j int) { _ = "STUB: not implemented"; return }
 
 // ArgVars lets you set workflow variables from Run Script actions.
 // It emits the arg and variables you set in the format required by Alfred.
@@ -571,89 +338,43 @@ type ArgVars struct {
 }
 
 // NewArgVars returns an initialised ArgVars object.
-func NewArgVars() *ArgVars {
-	return &ArgVars{vars: map[string]string{}}
-}
+func NewArgVars() *ArgVars { _ = "STUB: not implemented"; return nil }
 
 // Arg sets the arg(s)/query to be passed to the next workflow action.
 // Multiple values are allowed in Alfred 4.1 and later.
-func (a *ArgVars) Arg(s ...string) *ArgVars {
-	a.arg = s
-	return a
-}
+func (a *ArgVars) Arg(s ...string) *ArgVars { _ = "STUB: not implemented"; return nil }
 
 // Vars returns ArgVars' variables.
 // NOTE: This function only returns variables you have set with ArgVars.Var()
 // for export to Alfred during this run. To read variables from the environment,
 // use Workflow.Config.
 func (a *ArgVars) Vars() map[string]string {
-	return a.vars
+	_ = "STUB: not implemented"
+
+	// Var sets the value of a workflow variable.
+	return nil
 }
 
-// Var sets the value of a workflow variable.
-func (a *ArgVars) Var(k, v string) *ArgVars {
-	a.vars[k] = v
-	return a
-}
+func (a *ArgVars) Var(k, v string) *ArgVars { _ = "STUB: not implemented"; return nil }
 
 // String returns a string representation.
 //
 // If any variables are set, JSON is returned. Otherwise, a plain string
 // is returned.
-func (a *ArgVars) String() (string, error) {
-	if len(a.vars) == 0 && len(a.arg) < 2 {
-		if len(a.arg) == 0 {
-			return "", nil
-		}
-		return a.arg[0], nil
-	}
-	// Vars set, so return as JSON
-	data, err := a.MarshalJSON()
-	if err != nil {
-		return "", err
-	}
-	return string(data), nil
-}
+func (a *ArgVars) String() (string, error) { _ = "STUB: not implemented"; return "", nil }
+
+// Vars set, so return as JSON
 
 // Send outputs arg and variables to Alfred by printing a response to STDOUT.
-func (a *ArgVars) Send() error {
-	data, err := a.MarshalJSON()
-	if err != nil {
-		return err
-	}
-	_, err = fmt.Print(string(data))
-	return err
-}
+func (a *ArgVars) Send() error { _ = "STUB: not implemented"; return nil }
 
 // MarshalJSON serialises ArgVars to JSON.
 // You probably don't need to call this: use ArgVars.Send() instead.
 func (a *ArgVars) MarshalJSON() ([]byte, error) {
+	_ = "STUB: not implemented"
 	// Return arg regardless of whether it's empty or not:
 	// we have to return *something*
-	if len(a.vars) == 0 && len(a.arg) < 2 {
-		// Want empty string, i.e. "", not null
-		if len(a.arg) == 0 {
-			return []byte(`""`), nil
-		}
-		return json.Marshal(a.arg[0])
-	}
-
-	v := struct {
-		Arg  interface{}       `json:"arg,omitempty"`
-		Vars map[string]string `json:"variables,omitempty"`
-	}{
-		Vars: a.vars,
-	}
-
-	if len(a.arg) == 1 {
-		v.Arg = a.arg[0]
-	} else if len(a.arg) > 1 {
-		v.Arg = a.arg
-	}
-
-	return json.Marshal(&struct {
-		Root interface{} `json:"alfredworkflow"`
-	}{
-		Root: v,
-	})
+	return nil, nil
 }
+
+// Want empty string, i.e. "", not null

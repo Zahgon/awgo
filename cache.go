@@ -4,17 +4,8 @@
 package aw
 
 import (
-	"encoding/json"
-	"fmt"
-	"io/ioutil"
-	"log"
 	"math/rand"
-	"os"
-	"path/filepath"
-	"strings"
 	"time"
-
-	"github.com/deanishe/awgo/util"
 )
 
 var (
@@ -47,58 +38,20 @@ type Cache struct {
 
 // NewCache creates a new Cache using given directory.
 // Directory is created if it doesn't exist. Panics if directory can't be created.
-func NewCache(dir string) *Cache {
-	util.MustExist(dir)
-	return &Cache{dir}
-}
+func NewCache(dir string) *Cache { _ = "STUB: not implemented"; return nil }
 
 // Store saves data under the given name. If data is nil, the cache is deleted.
-func (c Cache) Store(name string, data []byte) error {
-	p := c.path(name)
-	if data == nil {
-		if util.PathExists(p) {
-			return os.Remove(p)
-		}
-		return nil
-	}
-	return util.WriteFile(p, data, 0600)
-}
+func (c Cache) Store(name string, data []byte) error { _ = "STUB: not implemented"; return nil }
 
 // StoreJSON serialises v to JSON and saves it to the cache. If v is nil,
 // the cache is deleted.
-func (c Cache) StoreJSON(name string, v interface{}) error {
-	p := c.path(name)
-	if v == nil {
-		if util.PathExists(p) {
-			return os.Remove(p)
-		}
-		return nil
-	}
-	data, err := json.MarshalIndent(v, "", "  ")
-	if err != nil {
-		return fmt.Errorf("marshal JSON: %w", err)
-	}
-	return c.Store(name, data)
-}
+func (c Cache) StoreJSON(name string, v interface{}) error { _ = "STUB: not implemented"; return nil }
 
 // Load reads data saved under given name.
-func (c Cache) Load(name string) ([]byte, error) {
-	p := c.path(name)
-	if _, err := os.Stat(p); err != nil {
-		return nil, err
-	}
-	return ioutil.ReadFile(p)
-}
+func (c Cache) Load(name string) ([]byte, error) { _ = "STUB: not implemented"; return nil, nil }
 
 // LoadJSON unmarshals named cache into v.
-func (c Cache) LoadJSON(name string, v interface{}) error {
-	p := c.path(name)
-	data, err := ioutil.ReadFile(p)
-	if err != nil {
-		return fmt.Errorf("read file: %w", err)
-	}
-	return json.Unmarshal(data, v)
-}
+func (c Cache) LoadJSON(name string, v interface{}) error { _ = "STUB: not implemented"; return nil }
 
 // LoadOrStore loads data from cache if they exist and are newer than maxAge.
 // If data do not exist or are older than maxAge, the reload function is
@@ -106,26 +59,11 @@ func (c Cache) LoadJSON(name string, v interface{}) error {
 //
 // If maxAge is 0, any cached data are always returned.
 func (c Cache) LoadOrStore(name string, maxAge time.Duration, reload func() ([]byte, error)) ([]byte, error) {
-	var load bool
-	age, err := c.Age(name)
-	if err != nil {
-		load = true
-	} else if maxAge > 0 && age > maxAge {
-		load = true
-	}
-	// log.Printf("age=%v, maxAge=%v, load=%v", age, maxAge, load)
-	if load {
-		data, err := reload()
-		if err != nil {
-			return nil, fmt.Errorf("reload data: %w", err)
-		}
-		if err := c.Store(name, data); err != nil {
-			return nil, err
-		}
-		return data, nil
-	}
-	return c.Load(name)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
+
+// log.Printf("age=%v, maxAge=%v, load=%v", age, maxAge, load)
 
 // LoadOrStoreJSON loads JSON-serialised data from cache if they exist and are
 // newer than maxAge. If the data do not exist or are older than maxAge, the
@@ -134,64 +72,29 @@ func (c Cache) LoadOrStore(name string, maxAge time.Duration, reload func() ([]b
 //
 // If maxAge is 0, any cached data are loaded regardless of age.
 func (c Cache) LoadOrStoreJSON(name string, maxAge time.Duration, reload func() (interface{}, error), v interface{}) error {
-	var (
-		load bool
-		data []byte
-		err  error
-	)
-	age, err := c.Age(name)
-	if err != nil {
-		load = true
-	} else if maxAge > 0 && age > maxAge {
-		load = true
-	}
-
-	if load {
-		i, err := reload()
-		if err != nil {
-			return fmt.Errorf("reload data: %w", err)
-		}
-		data, err = json.MarshalIndent(i, "", "  ")
-		if err != nil {
-			return fmt.Errorf("marshal data to JSON: %w", err)
-		}
-		if err := c.Store(name, data); err != nil {
-			return err
-		}
-	} else {
-		data, err = c.Load(name)
-		if err != nil {
-			return fmt.Errorf("load cached data: %w", err)
-		}
-	}
-	// TODO: Is there any way to directly return i without marshalling and unmarshalling it?
-	return json.Unmarshal(data, v)
+	_ = "STUB: not implemented"
+	return nil
 }
 
+// TODO: Is there any way to directly return i without marshalling and unmarshalling it?
+
 // Exists returns true if the named cache exists.
-func (c Cache) Exists(name string) bool { return util.PathExists(c.path(name)) }
+func (c Cache) Exists(name string) bool { _ = "STUB: not implemented"; return false }
 
 // Expired returns true if the named cache does not exist or is older than maxAge.
 func (c Cache) Expired(name string, maxAge time.Duration) bool {
-	age, err := c.Age(name)
-	if err != nil {
-		return true
-	}
-	return age > maxAge
+	_ = "STUB: not implemented"
+	return false
 }
 
 // Age returns the age of the data cached at name.
 func (c Cache) Age(name string) (time.Duration, error) {
-	p := c.path(name)
-	fi, err := os.Stat(p)
-	if err != nil {
-		return 0, err
-	}
-	return time.Since(fi.ModTime()), nil
+	_ = "STUB: not implemented"
+	return *new(time.Duration), nil
 }
 
 // path returns the path to a named file within cache directory.
-func (c Cache) path(name string) string { return filepath.Join(c.Dir, name) }
+func (c Cache) path(name string) string { _ = "STUB: not implemented"; return "" }
 
 // Session is a Cache that is tied to the `sessionID` value passed to NewSession().
 //
@@ -216,86 +119,47 @@ type Session struct {
 }
 
 // NewSession creates and initialises a Session.
-func NewSession(dir, sessionID string) *Session {
-	s := &Session{sessionID, NewCache(dir)}
-	return s
-}
+func NewSession(dir, sessionID string) *Session { _ = "STUB: not implemented"; return nil }
 
 // NewSessionID returns a pseudo-random string based on the current UNIX time
 // in nanoseconds.
-func NewSessionID() string {
-	b := make([]rune, sidLength)
-	for i := range b {
-		b[i] = letters[rand.Intn(len(letters))]
-	}
-	return string(b)
-}
+func NewSessionID() string { _ = "STUB: not implemented"; return "" }
 
 // Clear removes session-scoped cache data. If current is true, it also removes
 // data cached for the current session.
-func (s Session) Clear(current bool) error {
-	prefix := sessionPrefix + "."
-	curPrefix := fmt.Sprintf("%s.%s.", sessionPrefix, s.SessionID)
-
-	files, err := ioutil.ReadDir(s.cache.Dir)
-	if err != nil {
-		return fmt.Errorf("read directory (%s): %w", s.cache.Dir, err)
-	}
-	for _, fi := range files {
-		if !strings.HasPrefix(fi.Name(), prefix) {
-			continue
-		}
-		if !current && strings.HasPrefix(fi.Name(), curPrefix) {
-			continue
-		}
-		p := filepath.Join(s.cache.Dir, fi.Name())
-		os.RemoveAll(p)
-		log.Printf("deleted %s", p)
-	}
-	return nil
-}
+func (s Session) Clear(current bool) error { _ = "STUB: not implemented"; return nil }
 
 // Store saves data under the given name. If len(data) is 0, the file is
 // deleted.
-func (s Session) Store(name string, data []byte) error {
-	return s.cache.Store(s.name(name), data)
-}
+func (s Session) Store(name string, data []byte) error { _ = "STUB: not implemented"; return nil }
 
 // StoreJSON serialises v to JSON and saves it to the cache. If v is nil,
 // the cache is deleted.
-func (s Session) StoreJSON(name string, v interface{}) error {
-	return s.cache.StoreJSON(s.name(name), v)
-}
+func (s Session) StoreJSON(name string, v interface{}) error { _ = "STUB: not implemented"; return nil }
 
 // Load reads data saved under given name.
-func (s Session) Load(name string) ([]byte, error) {
-	return s.cache.Load(s.name(name))
-}
+func (s Session) Load(name string) ([]byte, error) { _ = "STUB: not implemented"; return nil, nil }
 
 // LoadJSON unmarshals a cache into v.
-func (s Session) LoadJSON(name string, v interface{}) error {
-	return s.cache.LoadJSON(s.name(name), v)
-}
+func (s Session) LoadJSON(name string, v interface{}) error { _ = "STUB: not implemented"; return nil }
 
 // LoadOrStore loads data from cache if they exist. If data do not exist,
 // reload is called, and the resulting data are cached & returned.
 func (s Session) LoadOrStore(name string, reload func() ([]byte, error)) ([]byte, error) {
-	return s.cache.LoadOrStore(s.name(name), 0, reload)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // LoadOrStoreJSON loads JSON-serialised data from cache if they exist.
 // If the data do not exist, reload is called, and the resulting interface{}
 // is cached and returned.
 func (s Session) LoadOrStoreJSON(name string, reload func() (interface{}, error), v interface{}) error {
-	return s.cache.LoadOrStoreJSON(s.name(name), 0, reload, v)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // Exists returns true if the named cache exists.
-func (s Session) Exists(name string) bool {
-	return s.cache.Exists(s.name(name))
-}
+func (s Session) Exists(name string) bool { _ = "STUB: not implemented"; return false }
 
 // name prefixes name with session prefix and session ID.
-func (s Session) name(name string) string {
-	return fmt.Sprintf("%s.%s.%s", sessionPrefix, s.SessionID, name)
-}
+func (s Session) name(name string) string { _ = "STUB: not implemented"; return "" }

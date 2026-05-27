@@ -4,18 +4,12 @@
 package update
 
 import (
-	"encoding/json"
-	"errors"
-	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
-	"net"
 	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
-	"sort"
 	"time"
 
 	"github.com/deanishe/awgo/util"
@@ -72,14 +66,12 @@ type Source interface {
 type byVersion []Download
 
 // Len implements sort.Interface.
-func (s byVersion) Len() int      { return len(s) }
-func (s byVersion) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
+func (s byVersion) Len() int      { _ = "STUB: not implemented"; return 0 }
+func (s byVersion) Swap(i, j int) { _ = "STUB: not implemented"; return }
 func (s byVersion) Less(i, j int) bool {
+	_ = "STUB: not implemented"
 	// Compare workflow versions first, compatible Alfred version second.
-	if s[i].Version.Ne(s[j].Version) {
-		return s[i].Version.Lt(s[j].Version)
-	}
-	return s[i].AlfredVersion().Lt(s[j].AlfredVersion())
+	return false
 }
 
 // Download is an Alfred workflow available for download & installation.
@@ -98,15 +90,7 @@ type Download struct {
 // For example, Workflow.alfred4workflow has version 4, while
 // Workflow.alfred3workflow has version 3.
 // The standard .alfredworkflow extension returns a zero version.
-func (dl Download) AlfredVersion() SemVer {
-	m := rxWorkflowFile.FindStringSubmatch(dl.Filename)
-	if len(m) == 2 {
-		if v, err := NewSemVer(m[1]); err == nil {
-			return v
-		}
-	}
-	return SemVer{}
-}
+func (dl Download) AlfredVersion() SemVer { _ = "STUB: not implemented"; return *new(SemVer) }
 
 // Updater checks for newer version of the workflow. Available versions are
 // provided by a Source, such as the built-in GitHub source, which
@@ -151,169 +135,46 @@ type Updater struct {
 // version number and `cacheDir` is a directory where the Updater can cache
 // a list of available releases.
 func NewUpdater(src Source, currentVersion, cacheDir string) (*Updater, error) {
-	v, err := NewSemVer(currentVersion)
-	if err != nil {
-		return nil, fmt.Errorf("invalid version %q: %w", currentVersion, err)
-	}
-	if cacheDir == "" {
-		return nil, errors.New("empty cacheDir")
-	}
-
-	u := &Updater{
-		CurrentVersion: v,
-		LastCheck:      time.Time{},
-		Source:         src,
-		cacheDir:       cacheDir,
-		updateInterval: UpdateInterval,
-		pathLastCheck:  filepath.Join(cacheDir, "LastCheckTime.txt"),
-		pathDownloads:  filepath.Join(cacheDir, "Downloads.json"),
-	}
-
-	if s := os.Getenv("alfred_version"); s != "" {
-		if v, err := NewSemVer(s); err == nil {
-			u.AlfredVersion = v
-		}
-	}
-
-	// Load LastCheck
-	if data, err := ioutil.ReadFile(u.pathLastCheck); err == nil {
-		t, err := time.Parse(time.RFC3339, string(data))
-		if err != nil {
-			log.Printf("error: load last update check: %v", err)
-		} else {
-			u.LastCheck = t
-		}
-	}
-	return u, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
+
+// Load LastCheck
 
 // UpdateAvailable returns true if an update is available. Retrieves
 // the list of releases from the cache written by CheckForUpdate.
-func (u *Updater) UpdateAvailable() bool {
-	dl := u.latest()
-	if dl == nil {
-		log.Println("no downloads available")
-		return false
-	}
-	log.Printf("latest version: %v", dl.Version)
-	return dl.Version.Gt(u.CurrentVersion)
-}
+func (u *Updater) UpdateAvailable() bool { _ = "STUB: not implemented"; return false }
 
 // CheckDue returns true if the time since the last check is greater than
 // Updater.UpdateInterval.
-func (u *Updater) CheckDue() bool {
-	if u.LastCheck.IsZero() {
-		// log.Println("never checked for updates")
-		return true
-	}
-	elapsed := time.Since(u.LastCheck)
-	log.Printf("%s since last check for update", elapsed)
-	return elapsed > u.updateInterval
-}
+func (u *Updater) CheckDue() bool { _ = "STUB: not implemented"; return false }
+
+// log.Println("never checked for updates")
 
 // CheckForUpdate fetches the list of releases from remote (via Releaser)
 // and caches it locally.
 func (u *Updater) CheckForUpdate() error {
+	_ = "STUB: not implemented"
 	// If update fails, don't try again for at least an hour
-	u.LastCheck = time.Now().Add(-u.updateInterval).Add(time.Hour)
-	defer u.cacheLastCheck()
-
-	var (
-		dls  []Download
-		data []byte
-		err  error
-	)
-
-	if dls, err = u.Source.Downloads(); err != nil {
-		return err
-	}
-	u.downloads = dls
-	if data, err = json.Marshal(dls); err != nil {
-		return err
-	}
-
-	u.clearCache()
-	if err := ioutil.WriteFile(u.pathDownloads, data, 0600); err != nil {
-		return err
-	}
-	u.LastCheck = time.Now()
 	return nil
 }
 
 // Install downloads and installs the latest available version.
 // After the workflow file is downloaded, Install calls Alfred to
 // install the update.
-func (u *Updater) Install() error {
-	dl := u.latest()
-	if dl == nil {
-		return errors.New("no downloads available")
-	}
-	log.Printf("downloading version %s ...", dl.Version)
-	p := filepath.Join(u.cacheDir, dl.Filename)
-	if err := download(dl.URL, p); err != nil {
-		return err
-	}
-
-	return runCommand("open", p)
-}
+func (u *Updater) Install() error { _ = "STUB: not implemented"; return nil }
 
 // clearCache removes the update cache.
-func (u *Updater) clearCache() {
-	if err := util.ClearDirectory(u.cacheDir); err != nil {
-		log.Printf("error: clear cache: %v", err)
-	}
-	util.MustExist(u.cacheDir)
-}
+func (u *Updater) clearCache() { _ = "STUB: not implemented"; return }
 
 // cacheLastCheck saves time to cache.
-func (u *Updater) cacheLastCheck() {
-	data, err := u.LastCheck.MarshalText()
-	if err != nil {
-		log.Printf("error: marshal time: %s", err)
-		return
-	}
-	if err := ioutil.WriteFile(u.pathLastCheck, data, 0600); err != nil {
-		log.Printf("error: cache update time: %s", err)
-	}
-}
+func (u *Updater) cacheLastCheck() { _ = "STUB: not implemented"; return }
 
 // Returns latest version that is compatible with the Updater's
 // Alfred version & pre-release preference.
-func (u *Updater) latest() *Download {
-	if u.downloads == nil {
-		u.downloads = []Download{}
-		if !util.PathExists(u.pathDownloads) {
-			log.Println("no cached releases")
-			return nil
-		}
-		// Load from cache
-		data, err := ioutil.ReadFile(u.pathDownloads)
-		if err != nil {
-			log.Printf("error: read cached releases: %s", err)
-			return nil
-		}
-		if err := json.Unmarshal(data, &u.downloads); err != nil {
-			log.Printf("error: unmarshal cached releases: %s", err)
-			return nil
-		}
-		sort.Sort(sort.Reverse(byVersion(u.downloads)))
-	}
-	if len(u.downloads) == 0 {
-		return nil
-	}
-	for _, dl := range u.downloads {
-		dl := dl
-		if dl.Prerelease && !u.Prereleases {
-			continue
-		}
-		if !u.AlfredVersion.IsZero() && dl.AlfredVersion().Gt(u.AlfredVersion) {
-			log.Printf("incompatible: %q: current=%v, required=%v", dl.Filename, u.AlfredVersion, dl.AlfredVersion())
-			continue
-		}
-		return &dl
-	}
-	return nil
-}
+func (u *Updater) latest() *Download { _ = "STUB: not implemented"; return nil }
+
+// Load from cache
 
 // // Mockable function to run commands
 // type commandRunner func(name string, arg ...string) error
@@ -324,45 +185,11 @@ func (u *Updater) latest() *Download {
 // }
 
 // makeHTTPClient returns an http.Client with a sensible configuration.
-func makeHTTPClient() *http.Client {
-	return &http.Client{
-		Transport: &http.Transport{
-			Dial: (&net.Dialer{
-				Timeout:   HTTPTimeout,
-				KeepAlive: HTTPTimeout,
-			}).Dial,
-			TLSHandshakeTimeout:   30 * time.Second,
-			ResponseHeaderTimeout: 30 * time.Second,
-			ExpectContinueTimeout: 10 * time.Second,
-		},
-	}
-}
+func makeHTTPClient() *http.Client { _ = "STUB: not implemented"; return nil }
 
 // getURL returns the contents of a URL.
-func getURL(url string) ([]byte, error) {
-	res, err := openURL(url)
-	if err != nil {
-		return []byte{}, err
-	}
-	defer res.Body.Close()
-	return ioutil.ReadAll(res.Body)
-}
+func getURL(url string) ([]byte, error) { _ = "STUB: not implemented"; return nil, nil }
 
 // openURL returns an http.Response. It will return an error if the
 // HTTP status code > 299.
-func openURL(url string) (*http.Response, error) {
-	log.Printf("fetching %s ...", url)
-	if client == nil {
-		client = makeHTTPClient()
-	}
-	r, err := client.Get(url)
-	if err != nil {
-		return nil, err
-	}
-	log.Printf("[%d] %s", r.StatusCode, url)
-	if r.StatusCode > 299 {
-		r.Body.Close()
-		return nil, errors.New(r.Status)
-	}
-	return r, nil
-}
+func openURL(url string) (*http.Response, error) { _ = "STUB: not implemented"; return nil, nil }

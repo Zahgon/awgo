@@ -4,14 +4,8 @@
 package util
 
 import (
-	"bytes"
-	"encoding/json"
 	"errors"
-	"log"
-	"os"
 	"os/exec"
-	"path/filepath"
-	"strings"
 )
 
 // ErrUnknownFileType is returned by Run for files it can't identify.
@@ -68,23 +62,11 @@ type Runner interface {
 type Runners []Runner
 
 // CanRun returns true if one of the runners can run this file.
-func (rs Runners) CanRun(filename string) bool {
-	for _, r := range rs {
-		if r.CanRun(filename) {
-			return true
-		}
-	}
-	return false
-}
+func (rs Runners) CanRun(filename string) bool { _ = "STUB: not implemented"; return false }
 
 // Cmd returns a command to run the (script) file.
 func (rs Runners) Cmd(filename string, args ...string) *exec.Cmd {
-	for _, r := range rs {
-		if r.CanRun(filename) {
-			return r.Cmd(filename, args...)
-		}
-	}
-
+	_ = "STUB: not implemented"
 	return nil
 }
 
@@ -92,150 +74,65 @@ func (rs Runners) Cmd(filename string, args ...string) *exec.Cmd {
 // If it can't figure out how to run the file (see Runner), it
 // returns ErrUnknownFileType.
 func (rs Runners) Run(filename string, args ...string) ([]byte, error) {
-	fi, err := os.Stat(filename)
-	if err != nil {
-		return nil, err
-	}
-	if fi.IsDir() {
-		return nil, ErrUnknownFileType
-	}
-
-	// See if a runner will accept file
-	for _, r := range rs {
-		if r.CanRun(filename) {
-			cmd := r.Cmd(filename, args...)
-			return RunCmd(cmd)
-		}
-	}
-
-	return nil, ErrUnknownFileType
+	_ = "STUB: not implemented"
+	return nil, nil
 }
+
+// See if a runner will accept file
 
 // Run runs the executable or script at path and returns the output.
 // If it can't figure out how to run the file (see Runner), it
 // returns ErrUnknownFileType.
 func Run(filename string, args ...string) ([]byte, error) {
-	return runners.Run(filename, args...)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // RunAS executes AppleScript and returns the output.
 func RunAS(script string, args ...string) (string, error) {
-	return runOsaScript(script, "AppleScript", args...)
+	_ = "STUB: not implemented"
+	return "", nil
 }
 
 // RunJS executes JavaScript (JXA) and returns the output.
 func RunJS(script string, args ...string) (string, error) {
-	return runOsaScript(script, "JavaScript", args...)
+	_ = "STUB: not implemented"
+	return "", nil
 }
 
 // runOsaScript executes a script with /usr/bin/osascript.
 // It returns the output from STDOUT.
 func runOsaScript(script, lang string, args ...string) (string, error) {
-	argv := []string{"-l", lang, "-e", script}
-	argv = append(argv, args...)
-
-	cmd := exec.Command("/usr/bin/osascript", argv...)
-	data, err := RunCmd(cmd)
-	if err != nil {
-		return "", err
-	}
-
-	// Remove trailing newline added by osascript
-	s := strings.TrimSuffix(string(data), "\n")
-
-	return s, nil
+	_ = "STUB: not implemented"
+	return "", nil
 }
+
+// Remove trailing newline added by osascript
 
 // RunCmd executes a command and returns its output.
 //
 // The main difference to exec.Cmd.Output() is that RunCmd writes all
 // STDERR output to the log if a command fails.
-func RunCmd(cmd *exec.Cmd) ([]byte, error) {
-	var stdout, stderr bytes.Buffer
-
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-
-	if err := cmd.Run(); err != nil {
-		log.Printf("------------- %v ---------------", cmd.Args)
-		log.Println(stderr.String())
-		log.Println("----------------------------------------------")
-		return nil, err
-	}
-
-	return stdout.Bytes(), nil
-}
+func RunCmd(cmd *exec.Cmd) ([]byte, error) { _ = "STUB: not implemented"; return nil, nil }
 
 // QuoteAS converts string to an AppleScript string literal for insertion into AppleScript code.
 // It wraps the value in quotation marks, so don't insert additional ones.
-func QuoteAS(s string) string {
-	if s == "" {
-		return `""`
-	}
-
-	if s == `"` {
-		return "quote"
-	}
-
-	chars := []string{}
-	for i, c := range s {
-		if c == '"' {
-			switch i {
-			case 0:
-				chars = append(chars, `quote & "`)
-			case len(s) - 1:
-				chars = append(chars, `" & quote`)
-			default:
-				chars = append(chars, `" & quote & "`)
-			}
-			continue
-		}
-		if i == 0 {
-			chars = append(chars, `"`)
-		}
-		chars = append(chars, string(c))
-		if i == len(s)-1 {
-			chars = append(chars, `"`)
-		}
-	}
-
-	return strings.Join(chars, "")
-}
+func QuoteAS(s string) string { _ = "STUB: not implemented"; return "" }
 
 // QuoteJS converts a value into JavaScript source code.
 // It calls json.Marshal(v), and returns an empty string if an error occurs.
-func QuoteJS(v interface{}) string {
-	data, err := json.Marshal(v)
-	if err != nil {
-		log.Printf("couldn't convert %#v to JS: %v", v, err)
-		return ""
-	}
-
-	return string(data)
-}
+func QuoteJS(v interface{}) string { _ = "STUB: not implemented"; return "" }
 
 // ExecRunner implements Runner for executable files.
 type ExecRunner struct{}
 
 // CanRun returns true if file exists and is executable.
-func (r ExecRunner) CanRun(filename string) bool {
-	fi, err := os.Stat(filename)
-	if err != nil || fi.IsDir() {
-		return false
-	}
-
-	perms := uint32(fi.Mode().Perm())
-	return perms&0111 != 0
-}
+func (r ExecRunner) CanRun(filename string) bool { _ = "STUB: not implemented"; return false }
 
 // Cmd returns a Cmd to run executable with args.
 func (r ExecRunner) Cmd(executable string, args ...string) *exec.Cmd {
-	executable, err := filepath.Abs(executable)
-	if err != nil {
-		panic(err)
-	}
-
-	return exec.Command(executable, args...)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // ScriptRunner implements Runner for the specified file extensions.
@@ -257,48 +154,21 @@ type ScriptRunner struct {
 
 // NewScriptRunner creates a new ScriptRunner for interpreters.
 func NewScriptRunner(interpreters map[string][]string) *ScriptRunner {
-	if interpreters == nil {
-		interpreters = map[string][]string{}
-	}
-
-	r := &ScriptRunner{
-		Interpreters: make(map[string][]string, len(interpreters)),
-	}
-
-	// Copy over defaults
-	for k, v := range interpreters {
-		r.Interpreters[k] = v
-	}
-
-	return r
+	_ = "STUB: not implemented"
+	return nil
 }
+
+// Copy over defaults
 
 // CanRun returns true if file exists and its extension is in Interpreters.
-func (r ScriptRunner) CanRun(filename string) bool {
-	if fi, err := os.Stat(filename); err != nil || fi.IsDir() {
-		return false
-	}
-	ext := strings.ToLower(filepath.Ext(filename))
-
-	_, ok := r.Interpreters[ext]
-	return ok
-}
+func (r ScriptRunner) CanRun(filename string) bool { _ = "STUB: not implemented"; return false }
 
 // Cmd returns a Cmd to run filename with its interpreter.
 func (r ScriptRunner) Cmd(filename string, args ...string) *exec.Cmd {
-	var (
-		argv    []string
-		command string
-	)
-
-	ext := strings.ToLower(filepath.Ext(filename))
-	interpreter := DefaultInterpreters[ext]
-
-	command = interpreter[0]
-
-	argv = append(argv, interpreter[1:]...) // any remainder of interpreter command
-	argv = append(argv, filename)           // path to script file
-	argv = append(argv, args...)            // arguments to script
-
-	return exec.Command(command, argv...)
+	_ = "STUB: not implemented"
+	return nil
 }
+
+// any remainder of interpreter command
+// path to script file
+// arguments to script

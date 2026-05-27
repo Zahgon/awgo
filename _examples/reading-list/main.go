@@ -11,25 +11,21 @@ Regular fuzzy sorting only considers match quality, so with the query
 "kingkiller", the Kingkiller Chronicle series would be sorted based on where
 the term "kingkiller" appears in the title, i.e. shortest title first:
 
-    The Doors of Stone (The Kingkiller Chronicle, #3) [unpublished]
-    The Wise Man's Fear (The Kingkiller Chronicle, #2) [unread]
-    The Name of the Wind (The Kingkiller Chronicle, #1) [read]
+	The Doors of Stone (The Kingkiller Chronicle, #3) [unpublished]
+	The Wise Man's Fear (The Kingkiller Chronicle, #2) [unread]
+	The Name of the Wind (The Kingkiller Chronicle, #1) [read]
 
 The custom implementation sorts by status then match quality, thus keeping
 unread books before unpublished and read ones:
 
-    The Wise Man's Fear (The Kingkiller Chronicle, #2) [unread]
-    The Doors of Stone (The Kingkiller Chronicle, #3) [unpublished]
-    The Name of the Wind (The Kingkiller Chronicle, #1) [read]
+	The Wise Man's Fear (The Kingkiller Chronicle, #2) [unread]
+	The Doors of Stone (The Kingkiller Chronicle, #3) [unpublished]
+	The Name of the Wind (The Kingkiller Chronicle, #1) [read]
 */
 package main
 
 import (
-	"fmt"
-	"sort"
-
 	aw "github.com/deanishe/awgo"
-	"go.deanishe.net/fuzzy"
 )
 
 // Reading status. We're going to use these to sort books, so unread books
@@ -49,66 +45,38 @@ type Book struct {
 }
 
 // URL returns the Goodreads URL for book.
-func (b Book) URL() string {
-	return fmt.Sprintf("https://www.goodreads.com/book/show/%d", b.ID)
-}
+func (b Book) URL() string { _ = "STUB: not implemented"; return "" }
 
 // Icon returns a workflow icon for Book.
-func (b Book) Icon() *aw.Icon {
-	switch b.Status {
-	case Unpublished:
-		return iconUnpublished
-	case Read:
-		return iconRead
-	default:
-		return iconUnread
-	}
-}
+func (b Book) Icon() *aw.Icon { _ = "STUB: not implemented"; return nil }
 
 // Books sorts books by status then by title. It implements fuzzy.Sortable
 // and therefore also sort.Interface.
 type Books []Book
 
 // Implement sort.Interface
-func (s Books) Len() int      { return len(s) }
-func (s Books) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
+func (s Books) Len() int      { _ = "STUB: not implemented"; return 0 }
+func (s Books) Swap(i, j int) { _ = "STUB: not implemented"; return }
 
 // Less sorts by status and then by title.
-func (s Books) Less(i, j int) bool {
-	a, b := s[i], s[j]
-	if a.Status != b.Status {
-		return a.Status < b.Status
-	}
-	return s.Keywords(i) < s.Keywords(j)
-}
+func (s Books) Less(i, j int) bool { _ = "STUB: not implemented"; return false }
 
 // Keywords implements fuzzy.Sortable.
-func (s Books) Keywords(i int) string {
-	return s[i].Title + " " + s[i].Author
-}
+func (s Books) Keywords(i int) string { _ = "STUB: not implemented"; return "" }
 
 // filterBooks preserves by-status sorting when fuzzy-sorting books, so unread
 // books are always before unpublished books, with read books last.
 func filterBooks(books []Book, query string) []Book {
+	_ = "STUB: not implemented"
 	// Per-status groups
-	groups := make([][]Book, 3)
-	// Fuzzy-sort books, then add them to the appropriate groups
-	for i, r := range fuzzy.Sort(Books(books), query) {
-		if !r.Match {
-			// Matching items sort to start, so ignore all books from here
-			break
-		}
-		book := books[i]
-		groups[book.Status] = append(groups[book.Status], book)
-	}
-
-	// Merge groups, which are each fuzzy-sorted by match quality
-	var matches []Book
-	for _, group := range groups {
-		matches = append(matches, group...)
-	}
-	return matches
+	return nil
 }
+
+// Fuzzy-sort books, then add them to the appropriate groups
+
+// Matching items sort to start, so ignore all books from here
+
+// Merge groups, which are each fuzzy-sorted by match quality
 
 var (
 	wf *aw.Workflow // Our Workflow struct
@@ -148,32 +116,17 @@ func main() {
 }
 
 func run() {
+	_ = "STUB: not implemented"
 	// Use wf.Args so magic actions are handled
-	query := wf.Args()[0]
-
-	// Disable UIDs so Alfred respects our sort order. Without this,
-	// it may bump read/unpublished books to the top of results, but
-	// we want to force them to always be below unread books.
-	wf.Configure(aw.SuppressUIDs(true))
-
-	if query == "" {
-		// Sort by status
-		sort.Sort(Books(books))
-	} else {
-		// Filter and keep by-status sorting
-		books = filterBooks(books, query)
-	}
-
-	// Script Filter results
-	for _, book := range books {
-		wf.NewItem(book.Title).
-			Subtitle(book.Author).
-			Arg(book.URL()).
-			UID(fmt.Sprintf("%d", book.ID)).
-			Valid(true).
-			Icon(book.Icon())
-	}
-
-	wf.WarnEmpty("No matching items", "Try a different query?")
-	wf.SendFeedback()
+	return
 }
+
+// Disable UIDs so Alfred respects our sort order. Without this,
+// it may bump read/unpublished books to the top of results, but
+// we want to force them to always be below unread books.
+
+// Sort by status
+
+// Filter and keep by-status sorting
+
+// Script Filter results

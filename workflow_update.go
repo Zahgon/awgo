@@ -3,11 +3,6 @@
 
 package aw
 
-import (
-	"errors"
-	"log"
-)
-
 // Updater can check for and download & install newer versions of the workflow.
 // There is a concrete implementation and documentation in subpackage update.
 type Updater interface {
@@ -21,41 +16,16 @@ type Updater interface {
 // Updating
 
 // setUpdater sets an updater for the workflow.
-func (wf *Workflow) setUpdater(u Updater) {
-	wf.Updater = u
-	wf.magicActions.register(&updateMA{wf.Updater})
-}
+func (wf *Workflow) setUpdater(u Updater) { _ = "STUB: not implemented"; return }
 
 // UpdateCheckDue returns true if an update is available.
-func (wf *Workflow) UpdateCheckDue() bool {
-	if wf.Updater == nil {
-		log.Println("No updater configured")
-		return false
-	}
-	return wf.Updater.CheckDue()
-}
+func (wf *Workflow) UpdateCheckDue() bool { _ = "STUB: not implemented"; return false }
 
 // CheckForUpdate retrieves and caches the list of available releases.
-func (wf *Workflow) CheckForUpdate() error {
-	if wf.Updater == nil {
-		return errors.New("No updater configured")
-	}
-	return wf.Updater.CheckForUpdate()
-}
+func (wf *Workflow) CheckForUpdate() error { _ = "STUB: not implemented"; return nil }
 
 // UpdateAvailable returns true if a newer version is available to install.
-func (wf *Workflow) UpdateAvailable() bool {
-	if wf.Updater == nil {
-		log.Println("No updater configured")
-		return false
-	}
-	return wf.Updater.UpdateAvailable()
-}
+func (wf *Workflow) UpdateAvailable() bool { _ = "STUB: not implemented"; return false }
 
 // InstallUpdate downloads and installs the latest version of the workflow.
-func (wf *Workflow) InstallUpdate() error {
-	if wf.Updater == nil {
-		return errors.New("No updater configured")
-	}
-	return wf.Updater.Install()
-}
+func (wf *Workflow) InstallUpdate() error { _ = "STUB: not implemented"; return nil }

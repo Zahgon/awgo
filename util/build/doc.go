@@ -11,6 +11,5 @@ There are also utility functions to help build workflows:
 
 	Symlink()  // symlink files
 	Export()  // create an .alfredworkflow file from a directory
-
 */
 package build

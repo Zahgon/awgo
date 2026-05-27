@@ -4,15 +4,8 @@
 package main
 
 import (
-	"encoding/json"
-	"errors"
-	"fmt"
-	"io/ioutil"
-	"log"
-	"math"
 	"net"
 	"net/http"
-	"net/url"
 	"time"
 )
 
@@ -52,12 +45,10 @@ type Repo struct {
 }
 
 // FullName returns standard "owner/repo" format.
-func (r *Repo) FullName() string {
-	return fmt.Sprintf("%s/%s", r.Username(), r.Name)
-}
+func (r *Repo) FullName() string { _ = "STUB: not implemented"; return "" }
 
 // Username is GitHub user login.
-func (r *Repo) Username() string { return r.Owner.Login }
+func (r *Repo) Username() string { _ = "STUB: not implemented"; return "" }
 
 // repoOwner is a helper struct for unmarshalling API JSON response.
 type repoOwner struct {
@@ -73,64 +64,12 @@ type apiResponse struct {
 // fetchRepos fetches all repos with topic "alfred-workflow" from GitHub.
 //
 // It iterates through all pages of results, returning all matching repos.
-func fetchRepos() ([]*Repo, error) {
-	repos := []*Repo{}
-	var (
-		pageCount int
-		pageNum   = 1
-	)
+func fetchRepos() ([]*Repo, error) { _ = "STUB: not implemented"; return nil, nil }
 
-	for {
-		if pageCount != 0 && pageNum > pageCount {
-			break
-		}
-		log.Printf("fetching page %d of %d ...", pageNum, pageCount)
+// Generate URL for next page of results
 
-		// Generate URL for next page of results
-		URL, _ := url.Parse(apiURL)
-		q := URL.Query()
-		q.Set("page", fmt.Sprintf("%d", pageNum))
-		q.Set("q", apiQuery)
-		URL.RawQuery = q.Encode()
+// Add headers to request (label feature isn't part of the standard API yet)
 
-		log.Printf("fetching %s ...", URL)
-		req, err := http.NewRequest("GET", URL.String(), nil)
-		if err != nil {
-			return nil, err
-		}
-		// Add headers to request (label feature isn't part of the standard API yet)
-		for k, v := range apiHeaders {
-			req.Header.Add(k, v)
-		}
+// Parse response
 
-		resp, err := client.Do(req)
-		if err != nil {
-			return nil, err
-		}
-		defer resp.Body.Close()
-
-		log.Printf("[%d] %s", resp.StatusCode, URL)
-		if resp.StatusCode > 299 {
-			return nil, errors.New(resp.Status)
-		}
-
-		// Parse response
-		data, _ := ioutil.ReadAll(resp.Body)
-		r := apiResponse{}
-		if err := json.Unmarshal(data, &r); err != nil {
-			return nil, err
-		}
-		repos = append(repos, r.Repos...)
-
-		// Populate pageCount if unset
-		if pageCount == 0 {
-			pageCount = r.Total / 100
-			if math.Mod(float64(r.Total), 100.0) > 0.0 {
-				pageCount++
-			}
-		}
-		pageNum++
-
-	}
-	return repos, nil
-}
+// Populate pageCount if unset

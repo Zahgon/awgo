@@ -8,7 +8,7 @@ It demonstrates best practices for handling updates, in particular
 loading the list of available releases in a background process and only
 showing an "Update is available!" message if the user query is empty.
 
-Details
+# Details
 
 Its own version (set in info.plist via Alfred's UI) is 0.2 and it's
 pointing to the GitHub repo "deanishe/alfred-ssh" (a completely
@@ -41,9 +41,6 @@ package main
 
 import (
 	"flag"
-	"log"
-	"os"
-	"os/exec"
 
 	aw "github.com/deanishe/awgo"
 	"github.com/deanishe/awgo/update"
@@ -119,82 +116,42 @@ func init() {
 }
 
 func run() {
-	wf.Args() // call to handle magic actions
-	flag.Parse()
-	query = flag.Arg(0)
-
-	// Alternate action: Get available releases from remote.
-	if doCheck {
-		wf.Configure(aw.TextErrors(true))
-		log.Println("Checking for updates...")
-		if err := wf.CheckForUpdate(); err != nil {
-			wf.FatalError(err)
-		}
-		return
-	}
-
-	// ----------------------------------------------------------------
-	// Script Filter
-	// ----------------------------------------------------------------
-
-	// Call self with "check" command if an update is due and a check
-	// job isn't already running.
-	if wf.UpdateCheckDue() && !wf.IsRunning(updateJobName) {
-		log.Println("Running update check in background...")
-
-		cmd := exec.Command(os.Args[0], "-check")
-		if err := wf.RunInBackground(updateJobName, cmd); err != nil {
-			log.Printf("Error starting update check: %s", err)
-		}
-	}
-
-	// Only show update status if query is empty.
-	if query == "" && wf.UpdateAvailable() {
-		// Turn off UIDs to force this item to the top.
-		// If UIDs are enabled, Alfred will apply its "knowledge"
-		// to order the results based on your past usage.
-		wf.Configure(aw.SuppressUIDs(true))
-
-		// Notify user of update. As this item is invalid (Valid(false)),
-		// actioning it expands the query to the Autocomplete value.
-		// "workflow:update" triggers the updater Magic Action that
-		// is automatically registered when you configure Workflow with
-		// an Updater.
-		//
-		// If executed, the Magic Action downloads the latest version
-		// of the workflow and asks Alfred to install it.
-		wf.NewItem("Update available!").
-			Subtitle("↩ to install").
-			Autocomplete("workflow:update").
-			Valid(false).
-			Icon(iconAvailable)
-	}
-
-	// Script Filter results
-	for _, name := range items {
-		wf.NewItem(name).
-			Arg(name).
-			UID(name).
-			Valid(true).
-			Icon(aw.IconUser)
-	}
-
-	// Add an extra item to reset update status for demo purposes.
-	// As with the update notification, this item triggers a Magic
-	// Action that deletes the cached list of releases.
-	wf.NewItem("Reset update status").
-		Autocomplete("workflow:delcache").
-		Icon(aw.IconTrash).
-		Valid(false)
-
-	// Filter results on user query if present
-	if query != "" {
-		wf.Filter(query)
-	}
-
-	wf.WarnEmpty("No matching items", "Try a different query?")
-	wf.SendFeedback()
+	_ = "STUB: not implemented"
+	// call to handle magic actions
+	return
 }
+
+// Alternate action: Get available releases from remote.
+
+// ----------------------------------------------------------------
+// Script Filter
+// ----------------------------------------------------------------
+
+// Call self with "check" command if an update is due and a check
+// job isn't already running.
+
+// Only show update status if query is empty.
+
+// Turn off UIDs to force this item to the top.
+// If UIDs are enabled, Alfred will apply its "knowledge"
+// to order the results based on your past usage.
+
+// Notify user of update. As this item is invalid (Valid(false)),
+// actioning it expands the query to the Autocomplete value.
+// "workflow:update" triggers the updater Magic Action that
+// is automatically registered when you configure Workflow with
+// an Updater.
+//
+// If executed, the Magic Action downloads the latest version
+// of the workflow and asks Alfred to install it.
+
+// Script Filter results
+
+// Add an extra item to reset update status for demo purposes.
+// As with the update notification, this item triggers a Magic
+// Action that deletes the cached list of releases.
+
+// Filter results on user query if present
 
 func main() {
 	wf.Run(run)

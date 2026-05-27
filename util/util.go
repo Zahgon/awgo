@@ -2,25 +2,22 @@
 // MIT Licence - http://opensource.org/licenses/MIT
 
 /*
-
 Package util contains general helper functions for workflow (library) authors.
 
 The functions can be divided into roughly three groups: paths, formatting
 and scripting.
 
-
-Paths
+# Paths
 
 There are a couple of convenience path functions, MustExist and
 ClearDirectory.
 
-
-Formatting
+# Formatting
 
 PrettyPath for user-friendly paths, and the Pad* functions for padding
 strings.
 
-Scripting
+# Scripting
 
 QuoteAS quotes strings for insertion into AppleScript code and there
 are several Run* functions for executing script code and files.
@@ -35,24 +32,19 @@ it runs the file directly. If it's a script file, it tries to guess the
 appropriate interpreter.
 
 See Runner for more information.
-
 */
 package util
 
 import (
-	"log"
 	"time"
 )
 
 // Timed logs the duration since start & title. Use it with defer.
 //
-//    func doSomething() {
-//        defer Timed(time.Now(), "long running task")
-//        // do thing here
-//        // and another thing
-//    }
-//    // Output: ... long running task
-//
-func Timed(start time.Time, title string) {
-	log.Printf("%s \U000029D7 %s", time.Since(start), title)
-}
+//	func doSomething() {
+//	    defer Timed(time.Now(), "long running task")
+//	    // do thing here
+//	    // and another thing
+//	}
+//	// Output: ... long running task
+func Timed(start time.Time, title string) { _ = "STUB: not implemented"; return }

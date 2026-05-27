@@ -4,19 +4,8 @@
 package build
 
 import (
-	"encoding/json"
-	"errors"
-	"fmt"
-	"io/ioutil"
 	"os"
-	"path/filepath"
 	"regexp"
-	"strconv"
-	"strings"
-
-	"github.com/deanishe/awgo/util"
-
-	"howett.net/plist"
 )
 
 // extract major version number from version string
@@ -34,18 +23,10 @@ type Option func(info *Info)
 
 // LibDir tells New to search a specific directory for Alfred config files.
 // Default is ~/Library.
-func LibDir(dir string) Option {
-	return func(info *Info) {
-		info.dir = dir
-	}
-}
+func LibDir(dir string) Option { _ = "STUB: not implemented"; return *new(Option) }
 
 // InfoPlist tells New to parse a specific info.plist file. Default is ./info.plist.
-func InfoPlist(path string) Option {
-	return func(info *Info) {
-		info.ipPath = path
-	}
-}
+func InfoPlist(path string) Option { _ = "STUB: not implemented"; return *new(Option) }
 
 // Info contains information about a workflow and Alfred.
 //
@@ -89,220 +70,30 @@ type Info struct {
 // over those from environment variables.
 //
 // It returns an error if info.plist or the configuration files cannot be found.
-func NewInfo(option ...Option) (*Info, error) {
-	info := &Info{
-		dir:    os.ExpandEnv("${HOME}/Library"),
-		ipPath: "info.plist",
-	}
-	for _, opt := range option {
-		opt(info)
-	}
-	info.readEnv()
-	if err := info.readPlist(); err != nil {
-		return nil, err
-	}
-	if err := info.findAlfredVersion(); err != nil {
-		return nil, err
-	}
-	if err := info.findFolders(); err != nil {
-		return nil, err
-	}
-	return info, nil
-}
+func NewInfo(option ...Option) (*Info, error) { _ = "STUB: not implemented"; return nil, nil }
 
 // Env returns an Alfred-like environment.
-func (info *Info) Env() map[string]string {
-	env := map[string]string{
-		"alfred_workflow_name":     info.Name,
-		"alfred_workflow_version":  info.Version,
-		"alfred_workflow_bundleid": info.BundleID,
-		"alfred_workflow_uid":      info.BundleID,
-		"alfred_workflow_cache":    info.CacheDir,
-		"alfred_workflow_data":     info.DataDir,
-		"alfred_preferences":       info.AlfredPrefsBundle,
-		"alfred_version":           fmt.Sprintf("%d", info.AlfredMajorVersion),
-		"alfred_debug":             "1",
-	}
-	return env
-}
+func (info *Info) Env() map[string]string { _ = "STUB: not implemented"; return nil }
 
-func (info *Info) findFolders() error {
-	syncDir, err := findSyncFolder(info.AlfredMajorVersion, info.dir)
-	if err != nil {
-		return err
-	}
-	info.AlfredSyncDir = syncDir
-	info.AlfredPrefsBundle = filepath.Join(syncDir, "Alfred.alfredpreferences")
-	info.AlfredWorkflowDir = filepath.Join(syncDir, "Alfred.alfredpreferences/workflows")
-	info.InstallDir = filepath.Join(info.AlfredWorkflowDir, info.BundleID)
-	if info.AlfredCacheDir == "" {
-		switch info.AlfredMajorVersion {
-		case 3:
-			info.AlfredCacheDir = os.ExpandEnv("${HOME}/Library/Caches/com.runningwithcrayons.Alfred-3/Workflow Data")
-		default:
-			info.AlfredCacheDir = os.ExpandEnv("${HOME}/Library/Caches/com.runningwithcrayons.Alfred/Workflow Data")
-		}
-	}
-	if info.AlfredDataDir == "" {
-		switch info.AlfredMajorVersion {
-		case 3:
-			info.AlfredDataDir = os.ExpandEnv("${HOME}/Library/Application Support/Alfred 3/Workflow Data")
-		default:
-			info.AlfredDataDir = os.ExpandEnv("${HOME}/Library/Application Support/Alfred/Workflow Data")
-		}
-	}
-	if info.CacheDir == "" {
-		info.CacheDir = filepath.Join(info.AlfredCacheDir, info.BundleID)
-	}
-	if info.DataDir == "" {
-		info.DataDir = filepath.Join(info.AlfredDataDir, info.BundleID)
-	}
+func (info *Info) findFolders() error { _ = "STUB: not implemented"; return nil }
 
-	return nil
-}
+func (info *Info) findAlfredVersion() error { _ = "STUB: not implemented"; return nil }
 
-func (info *Info) findAlfredVersion() error {
-	if info.AlfredMajorVersion != 0 {
-		return nil
-	}
-	if util.PathExists(filepath.Join(info.dir, "Application Support/Alfred/prefs.json")) {
-		info.AlfredMajorVersion = 4
-		return nil
-	}
-	if util.PathExists(filepath.Join(info.dir, "Preferences/com.runningwithcrayons.Alfred-Preferences-3.plist")) {
-		info.AlfredMajorVersion = 3
-		return nil
-	}
-	return errors.New("Alfred version not found")
-}
-
-func (info *Info) readEnv() {
-	info.Name = os.Getenv("alfred_workflow_name")
-	info.BundleID = os.Getenv("alfred_workflow_bundleid")
-	info.Version = os.Getenv("alfred_workflow_version")
-	if s := os.Getenv("alfred_workflow_data"); s != "" {
-		info.DataDir = s
-		info.AlfredDataDir = filepath.Dir(s)
-	}
-	if s := os.Getenv("alfred_workflow_cache"); s != "" {
-		info.CacheDir = s
-		info.AlfredCacheDir = filepath.Dir(s)
-	}
-
-	if s := rxVersion.FindString(os.Getenv("alfred_version")); s != "" {
-		if n, err := strconv.Atoi(s); err == nil {
-			info.AlfredMajorVersion = n
-		}
-	}
-}
+func (info *Info) readEnv() { _ = "STUB: not implemented"; return }
 
 // readPlist reads workflow information from info.plist.
-func (info *Info) readPlist() error {
-	file, err := os.Open(info.ipPath)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	data, err := ioutil.ReadAll(file)
-	if err != nil {
-		return err
-	}
-
-	p := struct {
-		Name     string `plist:"name"`
-		Version  string `plist:"version"`
-		BundleID string `plist:"bundleid"`
-	}{}
-	if _, err = plist.Unmarshal(data, &p); err != nil {
-		return err
-	}
-	if p.Name != "" {
-		info.Name = p.Name
-	}
-	if p.Version != "" {
-		info.Version = p.Version
-	}
-	if p.BundleID != "" {
-		info.BundleID = p.BundleID
-	}
-	return nil
-}
+func (info *Info) readPlist() error { _ = "STUB: not implemented"; return nil }
 
 // expand ~ in a filepath.
-func expand(path string) string {
-	if path == "~" || strings.HasPrefix(path, "~/") {
-		return filepath.Clean(filepath.Join(os.ExpandEnv("$HOME"), path[1:]))
-	}
-	return path
-}
+func expand(path string) string { _ = "STUB: not implemented"; return "" }
 
 // get path to Alfred's sync folder (parent of Alfred.alfredpreferences) from
 // environment or Alfred's config files
-func findSyncFolder(v int, dir string) (string, error) {
-	if s := os.Getenv("alfred_preferences"); s != "" {
-		return filepath.Dir(s), nil
-	}
+func findSyncFolder(v int, dir string) (string, error) { _ = "STUB: not implemented"; return "", nil }
 
-	var (
-		// Alfred 4+ has a dedicated prefs.json file, but earlier versions store
-		// the setting in Alfred Preference's version-specific prefs file
-		prefsJSON  = filepath.Join(dir, "Application Support/Alfred/prefs.json")
-		prefsPlist = filepath.Join(dir, "Preferences/com.runningwithcrayons.Alfred-Preferences-3.plist")
-		err        error
-	)
+// Alfred 4+ has a dedicated prefs.json file, but earlier versions store
+// the setting in Alfred Preference's version-specific prefs file
 
-	// Look for Alfred 4+ prefs.json
-	if util.PathExists(prefsJSON) && v != 3 {
-		var (
-			prefs = struct {
-				Current  string            `json:"current"`
-				Versions map[string]string `json:"syncfolders"`
-			}{}
-			data []byte
-		)
-		if data, err = ioutil.ReadFile(prefsJSON); err != nil {
-			return "", err
-		}
-		if err = json.Unmarshal(data, &prefs); err != nil {
-			return "", err
-		}
-		if v == 0 {
-			return filepath.Dir(prefs.Current), nil
-		}
+// Look for Alfred 4+ prefs.json
 
-		if path, ok := prefs.Versions[fmt.Sprintf("%d", v)]; ok {
-			p := expand(path)
-			if util.PathExists(p) {
-				return p, nil
-			}
-			return defaultSyncDirV4, nil
-		}
-		return "", fmt.Errorf("no syncfolder for version %d", v)
-	}
-
-	// Look for Alfred 3 preferences plist
-	if util.PathExists(prefsPlist) {
-		var (
-			prefs = struct {
-				SyncDir string `plist:"syncfolder"`
-			}{}
-
-			data []byte
-		)
-		if data, err = ioutil.ReadFile(prefsPlist); err != nil {
-			return "", err
-		}
-		if _, err = plist.Unmarshal(data, &prefs); err != nil {
-			return "", err
-		}
-
-		p := expand(prefs.SyncDir)
-		if util.PathExists(p) {
-			return p, nil
-		}
-		return defaultSyncDirV3, nil
-	}
-
-	return "", errors.New("Alfred preferences not found")
-}
+// Look for Alfred 3 preferences plist

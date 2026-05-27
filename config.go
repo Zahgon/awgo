@@ -4,9 +4,6 @@
 package aw
 
 import (
-	"errors"
-	"fmt"
-	"strings"
 	"time"
 
 	"github.com/deanishe/awgo/util"
@@ -17,11 +14,10 @@ import (
 //
 // Read the values with os.Getenv(EnvVarName) or via Config:
 //
-//    // Returns a string
-//    Config.Get(EnvVarName)
-//    // Parse string into a bool
-//    Config.GetBool(EnvVarDebug)
-//
+//	// Returns a string
+//	Config.Get(EnvVarName)
+//	// Parse string into a bool
+//	Config.GetBool(EnvVarDebug)
 const (
 	// Workflow info assigned in Alfred Preferences
 	EnvVarName     = "alfred_workflow_name"     // Name of workflow
@@ -66,10 +62,10 @@ var runJS = func(script string) error {
 // Config users a "Doer" API for setting variables, whereby calls are collected
 // and all executed at once when Config.Do() is called:
 //
-//     cfg := NewConfig()
-//     if err := cfg.Set("key1", "value1").Set("key2", "value2").Do(); err != nil {
-//         // handle error
-//     }
+//	cfg := NewConfig()
+//	if err := cfg.Set("key1", "value1").Set("key2", "value2").Do(); err != nil {
+//	    // handle error
+//	}
 //
 // Finally, you can use Config.To() to populate a struct from environment
 // variables, and Config.From() to read a struct's fields and save them
@@ -84,32 +80,19 @@ type Config struct {
 //
 // It accepts one optional Env argument. If an Env is passed, Config
 // is initialised from that instead of the system environment.
-func NewConfig(e ...Env) *Config {
-	var ev Env
-	if len(e) > 0 {
-		ev = e[0]
-	} else {
-		ev = env.System
-	}
-	return &Config{
-		Env:     ev,
-		reader:  env.New(ev),
-		scripts: []string{},
-	}
-}
+func NewConfig(e ...Env) *Config { _ = "STUB: not implemented"; return nil }
 
 // Get returns the value for envvar "key".
 // It accepts one optional "fallback" argument. If no envvar is set, returns
 // fallback or an empty string.
 //
 // If a variable is set, but empty, its value is used.
-func (cfg *Config) Get(key string, fallback ...string) string {
-	return cfg.reader.Get(key, fallback...)
-}
+func (cfg *Config) Get(key string, fallback ...string) string { _ = "STUB: not implemented"; return "" }
 
 // GetString is a synonym for Get.
 func (cfg *Config) GetString(key string, fallback ...string) string {
-	return cfg.Get(key, fallback...)
+	_ = "STUB: not implemented"
+	return ""
 }
 
 // GetInt returns the value for envvar "key" as an int.
@@ -119,9 +102,7 @@ func (cfg *Config) GetString(key string, fallback ...string) string {
 // Values are parsed with strconv.ParseInt(). If strconv.ParseInt() fails,
 // tries to parse the number with strconv.ParseFloat() and truncate it to an
 // int.
-func (cfg *Config) GetInt(key string, fallback ...int) int {
-	return cfg.reader.GetInt(key, fallback...)
-}
+func (cfg *Config) GetInt(key string, fallback ...int) int { _ = "STUB: not implemented"; return 0 }
 
 // GetFloat returns the value for envvar "key" as a float.
 // It accepts one optional "fallback" argument. If no envvar is set, returns
@@ -129,7 +110,8 @@ func (cfg *Config) GetInt(key string, fallback ...int) int {
 //
 // Values are parsed with strconv.ParseFloat().
 func (cfg *Config) GetFloat(key string, fallback ...float64) float64 {
-	return cfg.reader.GetFloat(key, fallback...)
+	_ = "STUB: not implemented"
+	return 0
 }
 
 // GetDuration returns the value for envvar "key" as a time.Duration.
@@ -138,7 +120,8 @@ func (cfg *Config) GetFloat(key string, fallback ...float64) float64 {
 //
 // Values are parsed with time.ParseDuration().
 func (cfg *Config) GetDuration(key string, fallback ...time.Duration) time.Duration {
-	return cfg.reader.GetDuration(key, fallback...)
+	_ = "STUB: not implemented"
+	return *new(time.Duration)
 }
 
 // GetBool returns the value for envvar "key" as a boolean.
@@ -147,7 +130,8 @@ func (cfg *Config) GetDuration(key string, fallback ...time.Duration) time.Durat
 //
 // Values are parsed with strconv.ParseBool().
 func (cfg *Config) GetBool(key string, fallback ...bool) bool {
-	return cfg.reader.GetBool(key, fallback...)
+	_ = "STUB: not implemented"
+	return false
 }
 
 // Set saves a workflow variable to info.plist.
@@ -156,14 +140,8 @@ func (cfg *Config) GetBool(key string, fallback ...bool) bool {
 // workflow whose configuration should be changed.
 // If not specified, it defaults to the current workflow's.
 func (cfg *Config) Set(key, value string, export bool, bundleID ...string) *Config {
-	bid := cfg.getBundleID(bundleID...)
-	opts := map[string]interface{}{
-		"toValue":    value,
-		"inWorkflow": bid,
-		"exportable": export,
-	}
-
-	return cfg.addScript(scriptSetConfig, key, opts)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // Unset removes a workflow variable from info.plist.
@@ -172,12 +150,8 @@ func (cfg *Config) Set(key, value string, export bool, bundleID ...string) *Conf
 // workflow whose configuration should be changed.
 // If not specified, it defaults to the current workflow's.
 func (cfg *Config) Unset(key string, bundleID ...string) *Config {
-	bid := cfg.getBundleID(bundleID...)
-	opts := map[string]interface{}{
-		"inWorkflow": bid,
-	}
-
-	return cfg.addScript(scriptRmConfig, key, opts)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // Do calls Alfred and runs the accumulated actions.
@@ -185,32 +159,15 @@ func (cfg *Config) Unset(key string, bundleID ...string) *Config {
 // Returns an error if there are no commands to run, or if the call to Alfred fails.
 // Succeed or fail, any accumulated scripts and errors are cleared when Do()
 // is called.
-func (cfg *Config) Do() error {
-	if len(cfg.scripts) == 0 {
-		return errors.New("no commands to run")
-	}
+func (cfg *Config) Do() error { _ = "STUB: not implemented"; return nil }
 
-	script := strings.Join(cfg.scripts, "\n")
-	// reset
-	cfg.scripts = []string{}
-
-	return runJS(script)
-}
+// reset
 
 // Extract bundle ID from argument or default.
-func (cfg *Config) getBundleID(bundleID ...string) string {
-	if len(bundleID) > 0 {
-		return bundleID[0]
-	}
-
-	bid, _ := cfg.Lookup(EnvVarBundleID)
-	return bid
-}
+func (cfg *Config) getBundleID(bundleID ...string) string { _ = "STUB: not implemented"; return "" }
 
 // Add a JavaScript that takes two arguments, a string and an object.
 func (cfg *Config) addScript(script, name string, opts map[string]interface{}) *Config {
-	script = fmt.Sprintf(script, util.QuoteJS(scriptAppName()), util.QuoteJS(name), util.QuoteJS(opts))
-	cfg.scripts = append(cfg.scripts, script)
-
-	return cfg
+	_ = "STUB: not implemented"
+	return nil
 }

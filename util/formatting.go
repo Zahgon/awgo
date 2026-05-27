@@ -4,14 +4,7 @@
 package util
 
 import (
-	"os"
 	"regexp"
-	"strings"
-	"unicode"
-
-	"golang.org/x/text/runes"
-	"golang.org/x/text/transform"
-	"golang.org/x/text/unicode/norm"
 )
 
 var (
@@ -20,67 +13,19 @@ var (
 )
 
 // Slugify makes a string filesystem- and URL-safe.
-func Slugify(s string) string {
-	s = fold(s)
-	s = rxAlphaNum.ReplaceAllString(s, "-")
-	s = rxMultiDash.ReplaceAllString(s, "-")
-	return s
-}
+func Slugify(s string) string { _ = "STUB: not implemented"; return "" }
 
 // fold strips diacritics from string.
-func fold(s string) string {
-	stripper := transform.Chain(norm.NFD, runes.Remove(runes.In(unicode.Mn)))
-	ascii, _, err := transform.String(stripper, s)
-	if err != nil {
-		panic(err)
-	}
-	return ascii
-}
+func fold(s string) string { _ = "STUB: not implemented"; return "" }
 
 // PrettyPath replaces $HOME with ~ in path
-func PrettyPath(path string) string {
-	home := os.Getenv("HOME")
-	if strings.HasPrefix(path, home) {
-		return "~" + path[len(home):]
-	}
-	return path
-}
+func PrettyPath(path string) string { _ = "STUB: not implemented"; return "" }
 
 // PadLeft pads str to length n by adding pad to its left.
-func PadLeft(str, pad string, n int) string {
-	if len(str) >= n {
-		return str
-	}
-	for {
-		str = pad + str
-		if len(str) >= n {
-			return str[len(str)-n:]
-		}
-	}
-}
+func PadLeft(str, pad string, n int) string { _ = "STUB: not implemented"; return "" }
 
 // PadRight pads str to length n by adding pad to its right.
-func PadRight(str, pad string, n int) string {
-	if len(str) >= n {
-		return str
-	}
-	for {
-		str += pad
-		if len(str) >= n {
-			return str[len(str)-n:]
-		}
-	}
-}
+func PadRight(str, pad string, n int) string { _ = "STUB: not implemented"; return "" }
 
 // Pad pads str to length n by adding pad to both ends.
-func Pad(str, pad string, n int) string {
-	if len(str) >= n {
-		return str
-	}
-	for {
-		str = pad + str + pad
-		if len(str) >= n {
-			return str[len(str)-n:]
-		}
-	}
-}
+func Pad(str, pad string, n int) string { _ = "STUB: not implemented"; return "" }

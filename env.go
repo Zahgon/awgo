@@ -3,12 +3,6 @@
 
 package aw
 
-import (
-	"fmt"
-	"os"
-	"strings"
-)
-
 // Env is the data source for configuration lookups.
 //
 // Pass a custom implementation to NewFromEnv() to provide a custom
@@ -16,9 +10,9 @@ import (
 //
 // As an absolute minimum, the following variables must be set:
 //
-//     alfred_workflow_bundleid
-//     alfred_workflow_cache
-//     alfred_workflow_data
+//	alfred_workflow_bundleid
+//	alfred_workflow_cache
+//	alfred_workflow_data
 //
 // See EnvVar* consts for all variables set by Alfred.
 type Env interface {
@@ -35,29 +29,12 @@ type Env interface {
 type sysEnv struct{}
 
 // Lookup wraps os.LookupEnv().
-func (e sysEnv) Lookup(key string) (string, bool) { return os.LookupEnv(key) }
+func (e sysEnv) Lookup(key string) (string, bool) {
+	_ = "STUB: not implemented"
+	return "",
 
-// Check that minimum required values are set.
-func validateEnv(env Env) error {
-	var (
-		issues   []string
-		required = []string{
-			EnvVarBundleID,
-			EnvVarCacheDir,
-			EnvVarDataDir,
-		}
-	)
-
-	for _, k := range required {
-		v, ok := env.Lookup(k)
-		if !ok || v == "" {
-			issues = append(issues, k+" is not set")
-		}
-	}
-
-	if issues != nil {
-		return fmt.Errorf("invalid Workflow environment: %s", strings.Join(issues, ", "))
-	}
-
-	return nil
+		// Check that minimum required values are set.
+		false
 }
+
+func validateEnv(env Env) error { _ = "STUB: not implemented"; return nil }

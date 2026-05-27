@@ -20,8 +20,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
-	"log"
 
 	aw "github.com/deanishe/awgo"
 )
@@ -49,117 +47,29 @@ func init() {
 }
 
 // save setting to info.plist via Alfred's AppleScript API
-func runSet(key, value string) {
-	wf.Configure(aw.TextErrors(true))
-
-	log.Printf("saving %#v to %s ...", value, key)
-
-	if err := wf.Config.Set(key, value, false).Do(); err != nil {
-		wf.FatalError(err)
-	}
-
-	if err := wf.Alfred.RunTrigger("settings", ""); err != nil {
-		wf.FatalError(err)
-	}
-
-	log.Printf("saved %#v to %s", value, key)
-}
+func runSet(key, value string) { _ = "STUB: not implemented"; return }
 
 // get new value for setting from user via Script Filter
-func runGet(key, value string) {
-	log.Printf("getting new %s ...", key)
-
-	if value != "" {
-		var varname string
-		switch key {
-		case "API key":
-			varname = "API_KEY"
-		case "hostname":
-			varname = "HOSTNAME"
-		case "port number":
-			varname = "PORT"
-		case "username":
-			varname = "USERNAME"
-		}
-
-		wf.NewItem(fmt.Sprintf("Set %s to “%s”", key, value)).
-			Subtitle("↩ to save").
-			Arg(value).
-			Valid(true).
-			Var("value", value).
-			Var("varname", varname)
-	}
-
-	wf.WarnEmpty(fmt.Sprintf("Enter %s", key), "")
-	wf.SendFeedback()
-}
+func runGet(key, value string) { _ = "STUB: not implemented"; return }
 
 func run() {
-	wf.Args() // call to handle magic actions
-
-	// ----------------------------------------------------------------
-	// Load configuration
-
-	// Default configuration
-	srv = &Server{
-		Hostname:   "localhost",
-		PortNumber: 6000,
-		Username:   "anonymous",
-	}
-
-	// Update config from environment variables
-	if err := wf.Config.To(srv); err != nil {
-		panic(err)
-	}
-
-	log.Printf("loaded: %#v", srv)
-
-	// ----------------------------------------------------------------
-	// Parse command-line flags and decide what to do
-
-	flag.Parse()
-	query := flag.Arg(0)
-
-	if setKey != "" {
-		runSet(setKey, query)
-		return
-	}
-
-	if getKey != "" {
-		runGet(getKey, query)
-		return
-	}
-
-	// ----------------------------------------------------------------
-	// Show available settings.
-
-	wf.NewItem("Hostname: "+srv.Hostname).
-		Subtitle("↩ to edit").
-		Valid(true).
-		Var("name", "hostname")
-
-	wf.NewItem(fmt.Sprintf("Port: %d", srv.PortNumber)).
-		Subtitle("↩ to edit").
-		Valid(true).
-		Var("name", "port number")
-
-	wf.NewItem("Username: "+srv.Username).
-		Subtitle("↩ to edit").
-		Valid(true).
-		Var("name", "username")
-
-	wf.NewItem("API Key: "+srv.APIKey).
-		Subtitle("↩ to edit").
-		Valid(true).
-		Var("name", "API key")
-
-	if query != "" {
-		wf.Filter(query)
-	}
-
-	wf.WarnEmpty("No Matching Items", "Try a different query?")
-	wf.SendFeedback()
+	_ = "STUB: not implemented"
+	// call to handle magic actions
+	return
 }
+
+// ----------------------------------------------------------------
+// Load configuration
+
+// Default configuration
+
+// Update config from environment variables
+
+// ----------------------------------------------------------------
+// Parse command-line flags and decide what to do
+
+// ----------------------------------------------------------------
+// Show available settings.
 
 func main() {
 	wf.Run(run)

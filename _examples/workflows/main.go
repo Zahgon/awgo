@@ -29,10 +29,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
-	"log"
-	"os"
-	"os/exec"
 	"time"
 
 	aw "github.com/deanishe/awgo"
@@ -69,91 +65,33 @@ func init() {
 }
 
 func run() {
-	wf.Args() // call to handle any magic actions
-	flag.Parse()
-
-	if args := flag.Args(); len(args) > 0 {
-		query = args[0]
-	}
-
-	if doDownload {
-		wf.Configure(aw.TextErrors(true))
-		log.Printf("[main] downloading repo list...")
-		repos, err := fetchRepos()
-		if err != nil {
-			wf.FatalError(err)
-		}
-		if err := wf.Cache.StoreJSON(cacheName, repos); err != nil {
-			wf.FatalError(err)
-		}
-		log.Printf("[main] downloaded repo list")
-		return
-	}
-
-	log.Printf("[main] query=%s", query)
-
-	// Try to load repos
-	repos := []*Repo{}
-	if wf.Cache.Exists(cacheName) {
-		if err := wf.Cache.LoadJSON(cacheName, &repos); err != nil {
-			wf.FatalError(err)
-		}
-	}
-
-	// If the cache has expired, set Rerun (which tells Alfred to re-run the
-	// workflow), and start the background update process if it isn't already
-	// running.
-	if wf.Cache.Expired(cacheName, maxCacheAge) {
-		wf.Rerun(0.3)
-		if !wf.IsRunning("download") {
-			cmd := exec.Command(os.Args[0], "-download")
-			if err := wf.RunInBackground("download", cmd); err != nil {
-				wf.FatalError(err)
-			}
-		} else {
-			log.Printf("download job already running.")
-		}
-		// Cache is also "expired" if it doesn't exist. So if there are no
-		// cached data, show a corresponding message and exit.
-		if len(repos) == 0 {
-			wf.NewItem("Downloading repos…").
-				Icon(aw.IconInfo)
-			wf.SendFeedback()
-			return
-		}
-	}
-
-	// Add results for cached repos
-	for _, r := range repos {
-		sub := fmt.Sprintf("★ %d", r.Stars)
-		if r.Description != "" {
-			sub += " – " + r.Description
-		}
-		wf.NewItem(r.FullName()).
-			Subtitle(sub).
-			Arg(r.URL).
-			UID(r.FullName()).
-			Valid(true)
-	}
-
-	// Filter results against query if user entered one
-	if query != "" {
-		res := wf.Filter(query)
-		log.Printf("[main] %d/%d repos match %q", len(res), len(repos), query)
-	}
-
-	// Convenience method that shows a warning if there are no results to show.
-	// Alfred's default behaviour if no results are returned is to show its
-	// fallback searches, which is also what it does if a workflow errors out.
-	//
-	// As such, it's a good idea to display a message in this situation,
-	// otherwise the user can't tell if the workflow failed or simply found
-	// no matching results.
-	wf.WarnEmpty("No repos found", "Try a different query?")
-
-	// Send results/warning message to Alfred
-	wf.SendFeedback()
+	_ = "STUB: not implemented"
+	// call to handle any magic actions
+	return
 }
+
+// Try to load repos
+
+// If the cache has expired, set Rerun (which tells Alfred to re-run the
+// workflow), and start the background update process if it isn't already
+// running.
+
+// Cache is also "expired" if it doesn't exist. So if there are no
+// cached data, show a corresponding message and exit.
+
+// Add results for cached repos
+
+// Filter results against query if user entered one
+
+// Convenience method that shows a warning if there are no results to show.
+// Alfred's default behaviour if no results are returned is to show its
+// fallback searches, which is also what it does if a workflow errors out.
+//
+// As such, it's a good idea to display a message in this situation,
+// otherwise the user can't tell if the workflow failed or simply found
+// no matching results.
+
+// Send results/warning message to Alfred
 
 func main() {
 	wf.Run(run)

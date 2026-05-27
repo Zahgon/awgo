@@ -3,15 +3,6 @@
 
 package aw
 
-import (
-	"fmt"
-	"os"
-	"path/filepath"
-	"strings"
-
-	"github.com/deanishe/awgo/util"
-)
-
 // JXA scripts to call Alfred.
 const (
 	scriptSearch = "Application(%s).search(%s);"
@@ -54,39 +45,20 @@ type Alfred struct {
 //
 // It accepts one optional Env argument. If an Env is passed, Alfred
 // is initialised from that instead of the system environment.
-func NewAlfred(env ...Env) *Alfred {
-	var e Env = sysEnv{}
-	if len(env) > 0 {
-		e = env[0]
-	}
-
-	return &Alfred{Env: e}
-}
+func NewAlfred(env ...Env) *Alfred { _ = "STUB: not implemented"; return nil }
 
 // Search runs Alfred with the given query. Use an empty query to just open Alfred.
-func (a *Alfred) Search(query string) error {
-	return a.runScript(scriptSearch, query)
-}
+func (a *Alfred) Search(query string) error { _ = "STUB: not implemented"; return nil }
 
 // Browse tells Alfred to open path in navigation mode.
-func (a *Alfred) Browse(path string) error {
-	var err error
-
-	if path, err = filepath.Abs(path); err != nil {
-		return err
-	}
-
-	return a.runScript(scriptBrowse, path)
-}
+func (a *Alfred) Browse(path string) error { _ = "STUB: not implemented"; return nil }
 
 // SetTheme tells Alfred to use the specified theme.
-func (a *Alfred) SetTheme(name string) error {
-	return a.runScript(scriptSetTheme, name)
-}
+func (a *Alfred) SetTheme(name string) error { _ = "STUB: not implemented"; return nil }
 
 // Action tells Alfred to show Universal Actions for value(s). This calls Alfred.ActionAsType
 // with an empty type.
-func (a *Alfred) Action(value ...string) error { return a.ActionAsType("", value...) }
+func (a *Alfred) Action(value ...string) error { _ = "STUB: not implemented"; return nil }
 
 // ActionAsType tells Alfred to show Universal Actions for value(s). Type typ
 // may be one of "file", "url" or "text", or an empty string to tell Alfred
@@ -94,31 +66,8 @@ func (a *Alfred) Action(value ...string) error { return a.ActionAsType("", value
 //
 // Added in Alfred 4.5
 func (a *Alfred) ActionAsType(typ string, value ...string) error {
-	if len(value) == 0 {
-		return nil
-	}
-
-	if typ == TypeFile {
-		for i, s := range value {
-			p, err := filepath.Abs(s)
-			if err != nil {
-				return fmt.Errorf("make absolute path %q: %w", s, err)
-			}
-			value[i] = p
-		}
-	}
-
-	switch typ {
-	case "":
-		return a.runScript(scriptAction, value)
-	case "file", "url", "text":
-		opts := map[string]interface{}{
-			"asType": typ,
-		}
-		return a.runScript(scriptActionType, value, opts)
-	default:
-		return fmt.Errorf("unknown type: %s", typ)
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // RunTrigger runs an External Trigger in the given workflow. Query may be empty.
@@ -127,57 +76,26 @@ func (a *Alfred) ActionAsType(typ string, value ...string) error {
 // workflow whose trigger should be run.
 // If not specified, it defaults to the current workflow's.
 func (a *Alfred) RunTrigger(name, query string, bundleID ...string) error {
-	bid, _ := a.Lookup(EnvVarBundleID)
-	if len(bundleID) > 0 {
-		bid = bundleID[0]
-	}
-
-	opts := map[string]interface{}{
-		"inWorkflow": bid,
-	}
-
-	if query != "" {
-		opts["withArgument"] = query
-	}
-
-	return a.runScript(scriptTrigger, name, opts)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // ReloadWorkflow tells Alfred to reload a workflow from disk.
 //
 // It accepts one optional bundleID argument, which is the bundle ID of the
 // workflow to reload. If not specified, it defaults to the current workflow's.
-func (a *Alfred) ReloadWorkflow(bundleID ...string) error {
-	bid, _ := a.Lookup(EnvVarBundleID)
-	if len(bundleID) > 0 {
-		bid = bundleID[0]
-	}
-
-	return a.runScript(scriptReload, bid)
-}
+func (a *Alfred) ReloadWorkflow(bundleID ...string) error { _ = "STUB: not implemented"; return nil }
 
 func (a *Alfred) runScript(script string, arg ...interface{}) error {
-	quoted := []interface{}{util.QuoteJS(scriptAppName())}
-	for _, v := range arg {
-		quoted = append(quoted, util.QuoteJS(v))
-	}
-	script = fmt.Sprintf(script, quoted...)
-
-	if a.noRunScripts {
-		a.lastScript = script
-		return nil
-	}
-
-	_, err := util.RunJS(script)
-	return err
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // Name of JXA Application for running Alfred
 func scriptAppName() string {
+	_ = "STUB: not implemented"
 	// Alfred 3
-	if strings.HasPrefix(os.Getenv(EnvVarAlfredVersion), "3") {
-		return "Alfred 3"
-	}
-	// Alfred 4+
-	return "com.runningwithcrayons.Alfred"
+	return ""
 }
+
+// Alfred 4+
